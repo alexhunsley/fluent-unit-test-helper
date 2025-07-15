@@ -27,6 +27,7 @@
 		9A4E647C2E2707B800D1235A /* FluentUnitTesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FluentUnitTesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A4E648D2E2707BA00D1235A /* FluentUnitTestingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FluentUnitTestingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A4E64972E2707BA00D1235A /* FluentUnitTestingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FluentUnitTestingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9AEE65A02E270C7C00AB414A /* FluentUnitTesting.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = FluentUnitTesting.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +76,7 @@
 		9A4E64732E2707B800D1235A = {
 			isa = PBXGroup;
 			children = (
+				9AEE65A02E270C7C00AB414A /* FluentUnitTesting.xctestplan */,
 				9A4E647E2E2707B800D1235A /* FluentUnitTesting */,
 				9A4E64902E2707BA00D1235A /* FluentUnitTestingTests */,
 				9A4E649A2E2707BA00D1235A /* FluentUnitTestingUITests */,
