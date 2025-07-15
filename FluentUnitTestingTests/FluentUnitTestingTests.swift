@@ -39,14 +39,31 @@ final class FluentUnitTestingTests: FluentUnitTesting {
         given(
             sut
                 .hasAge(10)
+                .not(hasAge(11))
                 .withAge(age)
                 .hasAge(age)
                 .withReachedBirthday
                 .hasAge(age + 1)
-                .withReachedBirthday
-                .withReachedBirthday
+                .times(2, withReachedBirthday)
                 .hasAge(age + 3)
-                .not({ $0.hasReachedCentenery })
+                .not(hasReachedCentenery)
+        )
+    }
+
+    @Test("Age setting and getting works", arguments: [98])
+    func test_age0B(_ age: Int) async throws {
+        // testing age2 test hasn't left an effect
+        given(
+            sut
+                .withAge(age)
+                .hasAge(age)
+                .not(hasReachedCentenery)
+                .withReachedBirthday
+                .not(hasReachedCentenery)
+                .withReachedBirthday
+                .hasReachedCentenery
+                .withReachedBirthday
+                .hasReachedCentenery
         )
     }
 
@@ -159,12 +176,46 @@ extension FluentUnitTesting {
     //    }
 
     @discardableResult
-//    func not(_ assertion: @autoclosure () -> Self) -> Self {
-    func not(_ assertion: (Self) -> Self) -> Self {
+    //    func not(_ assertion: @autoclosure () -> Self) -> Self {
+    func notC(_ assertion: (Self) -> Self) -> Self {
+        withKnownIssue("flipped expectation") {
+            // the assertion bit itself contains any #expect
+            _ = assertion(self)
+            //        #expect(assertion())
+        }
+        return self
+    }
+
+    func notA(_ assertion: @autoclosure () -> Self) -> Self {
+        withKnownIssue("flipped expectation") {
+            // the assertion bit itself contains any #expect
+            _ = assertion()
+            //        #expect(assertion())
+        }
+        return self
+    }
+
+    func notB(_ kp: KeyPath<Self, Self>) -> Self {
+        withKnownIssue("flipped expectation") {
+            // the assertion bit itself contains any #expect
+            _ = self[keyPath: kp]
+            //        #expect(assertion())
+        }
+        return self
+    }
+
+    @discardableResult
+    func not(_ assertion: @autoclosure () -> Self) -> Self {
       withKnownIssue("flipped expectation") {
-          // the assertion bit itself contains any #expect
-          _ = assertion(self)
-//        #expect(assertion())
+        _ = assertion()
+      }
+      return self
+    }
+
+    @discardableResult
+    func times(_ times: Int, _ expr: @autoclosure () -> Self) -> Self {
+      for _ in 0..<times {
+        _ = expr()
       }
       return self
     }
