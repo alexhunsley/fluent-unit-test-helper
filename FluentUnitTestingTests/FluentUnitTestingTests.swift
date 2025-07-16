@@ -1,74 +1,54 @@
 import Testing
+//@_spi(Experimental) import Testing
+import Foundation
+
 @testable import FluentUnitTesting
 
-struct Account {
-    var age: Int
-}
-
-class AccountClass {
-    var age: Int
-
-    init(age: Int) {
-        self.age = age
-    }
-}
-
+// need to use a reference type (class) for mutation reasons
 final class FluentUnitTestingTests: FluentUnitTesting {
-    // can't mutate this value directly, but can mutate what
-    // things are referencing.
-
-    // hmm, make a sut class? then can change.
-    //    class SUT {
     var name: String
-    var account: Account
-    var accountClass: AccountClass
     var age: Int
 
     init() {
         print("Init!")
         self.name = "alex"
-        self.account = Account(age: 23)
-        self.accountClass = AccountClass(age: 23)
         self.age = 10
     }
-    //    }
 
     @Test("Age setting and getting works", arguments: [0, 1, 10, 90])
-    func test_age0(_ age: Int) async throws {
-        // testing age2 test hasn't left an effect
+    func test_agesBelow100(_ age: Int) async throws {
         given(
             sut
-                .hasAge(10)
-                .not(hasAge(11))
                 .withAge(age)
                 .hasAge(age)
-                .withReachedBirthday
+                .not(hasAge(age + 1))
+                .withHappyBirthday
                 .hasAge(age + 1)
-                .times(2, withReachedBirthday)
+                .times(2, withHappyBirthday)
                 .hasAge(age + 3)
                 .not(hasReachedCentenery)
+                .withAge(100)
+                .hasReachedCentenery
         )
     }
 
-    @Test("Age setting and getting works", arguments: [98])
-    func test_age0B(_ age: Int) async throws {
-        // testing age2 test hasn't left an effect
+    @Test("Incrementing age and centenery status", arguments: [97, 98])
+    func test_ageReaching100(_ age: Int) async throws {
         given(
             sut
                 .withAge(age)
                 .hasAge(age)
                 .not(hasReachedCentenery)
-                .withReachedBirthday
+                .withHappyBirthday
                 .not(hasReachedCentenery)
-                .withReachedBirthday
+                .times(3, withHappyBirthday)
                 .hasReachedCentenery
-                .withReachedBirthday
+                .withHappyBirthday
                 .hasReachedCentenery
         )
     }
 
     @Test func test_age1() async throws {
-        // testing age2 test hasn't left an effect
         given(sut
             .hasAge(10)
         )
@@ -86,7 +66,6 @@ final class FluentUnitTestingTests: FluentUnitTesting {
     }
 
     @Test func test_age3() async throws {
-        // testing age2 test hasn't left an effect
         given(sut
             .hasAge(10)
         )
@@ -99,11 +78,7 @@ extension FluentUnitTestingTests {
         return self
     }
 
-//    func sut(goober: @autoclosure )
-
-    // so we can mutate direct value via a func, but not a computed property
     func withName(_ name: String) {
-//        self.name = name
         self.name = name
     }
 
@@ -112,111 +87,29 @@ extension FluentUnitTestingTests {
         return self
     }
 
-    var withReachedBirthday: Self {
+    var withHappyBirthday: Self {
         age += 1
         return self
     }
 
     var withAgeFifty: Self {
-        // NOTE: not allowed to change a value, but can tweak contents of a reference type
-//        self.account.age = 50
-//        self.accountClass.age = 50
         age = 50
         return self
     }
 
     var hasReachedCentenery: Self {
-        #expect(self.age >= 100)
+        fexpect(self.age >= 100)
         return self
     }
 
-//    var sut: Self {
-//        .init()
-//    }
-
-
-//    var given: Self {
-//        self
-//    }
-
     var isNamedBob: Self {
-        #expect(name == "bob")
+        fexpect(name == "bob")
         return self
     }
 
     func hasAge(_ expectAge: Int) -> Self {
-        #expect(age == expectAge)
+        fexpect(age == expectAge)
         return self
     }
-
 }
 
-protocol FluentUnitTesting {
-    init()
-}
-
-extension FluentUnitTesting {
-    // don't make a new one. do test side effects pile up? - no, good.
-    var sut: Self {
-        self
-    }
-
-    // use autoclosure?
-    @discardableResult
-    func given(_ zelf: Self) -> Self {
-        zelf
-    }
-
-    //    func not(_ kp: KeyPath<Self, Bool>) -> Self {
-    //    func not(_ kp: KeyPath<Self, Bool>) -> Self {
-    //        withKnownIssue("this is to flip the expectation") {
-    //            _ = self[keyPath: kp]
-    //        }
-    //        return self
-    //    }
-
-    @discardableResult
-    //    func not(_ assertion: @autoclosure () -> Self) -> Self {
-    func notC(_ assertion: (Self) -> Self) -> Self {
-        withKnownIssue("flipped expectation") {
-            // the assertion bit itself contains any #expect
-            _ = assertion(self)
-            //        #expect(assertion())
-        }
-        return self
-    }
-
-    func notA(_ assertion: @autoclosure () -> Self) -> Self {
-        withKnownIssue("flipped expectation") {
-            // the assertion bit itself contains any #expect
-            _ = assertion()
-            //        #expect(assertion())
-        }
-        return self
-    }
-
-    func notB(_ kp: KeyPath<Self, Self>) -> Self {
-        withKnownIssue("flipped expectation") {
-            // the assertion bit itself contains any #expect
-            _ = self[keyPath: kp]
-            //        #expect(assertion())
-        }
-        return self
-    }
-
-    @discardableResult
-    func not(_ assertion: @autoclosure () -> Self) -> Self {
-      withKnownIssue("flipped expectation") {
-        _ = assertion()
-      }
-      return self
-    }
-
-    @discardableResult
-    func times(_ times: Int, _ expr: @autoclosure () -> Self) -> Self {
-      for _ in 0..<times {
-        _ = expr()
-      }
-      return self
-    }
-}
