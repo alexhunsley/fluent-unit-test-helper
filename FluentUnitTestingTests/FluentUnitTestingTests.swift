@@ -8,6 +8,7 @@ import Foundation
 final class FluentUnitTestingTests: FluentUnitTesting {
     var name: String
     var age: Int
+    var loopReps = 100
 
     init() {
         print("Init!")
@@ -15,21 +16,60 @@ final class FluentUnitTestingTests: FluentUnitTesting {
         self.age = 10
     }
 
+    // NB parallelisation is across different tests in a suite, and suites
     @Test("Age setting and getting works", arguments: [0, 1, 10, 90])
     func test_agesBelow100(_ age: Int) async throws {
-        given(
-            sut
-                .withAge(age)
-                .hasAge(age)
-                .not(hasAge(age + 1))
-                .withHappyBirthday
-                .hasAge(age + 1)
-                .times(2, withHappyBirthday)
-                .hasAge(age + 3)
-                .not(hasReachedCentenery)
-                .withAge(100)
-                .hasReachedCentenery
-        )
+        for _ in 0..<loopReps {
+            given(
+                sut
+                    .withAge(age)
+                    .hasAge(age)
+                    .not(hasAge(age + 1))
+                    .withHappyBirthday
+                    .hasAge(age + 1)
+                    .times(2, withHappyBirthday)
+                    .hasAge(age + 3)
+                    .not(hasReachedCentenery)
+                    .withAge(100)
+                    .hasReachedCentenery
+            )
+        }
+    }
+
+    func test_agesBelow100B(_ age: Int) async throws {
+        for _ in 0..<loopReps {
+            given(
+                sut
+                    .withAge(age)
+                    .hasAge(age)
+                    .not(hasAge(age + 1))
+                    .withHappyBirthday
+                    .hasAge(age + 1)
+                    .times(2, withHappyBirthday)
+                    .hasAge(age + 3)
+                    .not(hasReachedCentenery)
+                    .withAge(100)
+                    .hasReachedCentenery
+            )
+        }
+    }
+
+    func test_agesBelow100C(_ age: Int) async throws {
+        for _ in 0..<loopReps {
+            given(
+                sut
+                    .withAge(age)
+                    .hasAge(age)
+                    .not(hasAge(age + 1))
+                    .withHappyBirthday
+                    .hasAge(age + 1)
+                    .times(2, withHappyBirthday)
+                    .hasAge(age + 3)
+                    .not(hasReachedCentenery)
+                    .withAge(100)
+                    .hasReachedCentenery
+            )
+        }
     }
 
     @Test("Incrementing age and centenery status", arguments: [97, 98])

@@ -9,11 +9,20 @@
     }
   ],
   "defaultOptions" : {
+    "guardMallocEnabled" : true,
+    "mallocGuardEdgesEnabled" : true,
+    "mallocScribbleEnabled" : true,
+    "mallocStackLoggingOptions" : {
+      "loggingType" : "liveAllocations"
+    },
+    "maximumTestRepetitions" : 10,
+    "nsZombieEnabled" : true,
     "targetForVariableExpansion" : {
       "containerPath" : "container:FluentUnitTesting.xcodeproj",
       "identifier" : "9A4E647B2E2707B800D1235A",
       "name" : "FluentUnitTesting"
-    }
+    },
+    "testRepetitionMode" : "fixedIterations"
   },
   "testTargets" : [
     {
